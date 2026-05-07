@@ -1,0 +1,5 @@
+Model,WER (%),Locality Accuracy (%),Avg Latency (s)
+Deepgram,86.88,21.67,3.34
+Google Cloud,93.26,11.67,1.41
+Whisper Base,99.72,1.67,7.34
+Whisper Small,95.41,6.67,6.14
