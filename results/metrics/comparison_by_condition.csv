@@ -1,0 +1,13 @@
+Condition,Model,WER (%),Locality Extraction Accuracy (%),Avg Latency (s)
+Normal (Quiet),Deepgram,18.01,25.0,3.96
+Normal (Quiet),Google Cloud,21.46,5.0,1.35
+Normal (Quiet),Whisper Base,48.2,0.0,5.17
+Normal (Quiet),Whisper Small,18.31,0.0,3.37
+Metro + Phone,Deepgram,32.31,15.0,2.55
+Metro + Phone,Google Cloud,30.39,5.0,1.43
+Metro + Phone,Whisper Base,47.92,0.0,6.2
+Metro + Phone,Whisper Small,35.97,0.0,6.63
+Metro + Earphone,Deepgram,35.54,10.0,3.5
+Metro + Earphone,Google Cloud,34.71,0.0,1.44
+Metro + Earphone,Whisper Base,47.5,0.0,10.64
+Metro + Earphone,Whisper Small,35.35,0.0,8.42

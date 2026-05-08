@@ -146,7 +146,7 @@ def main():
     print("\n" + "="*60)
     print("BENCHMARK COMPLETE!")
     print("="*60)
-    print("\nNext step: Run 'python src/calculate_metrics.py' to analyze results")
+    print("\nNext step: Run 'python src/calculate_metrics_by_condition.py' to analyze results")
 
 
 if __name__ == "__main__":

@@ -1,45 +1,45 @@
 # ASR Benchmark for Indian Conversational Speech
 
-Benchmarking 4 ASR systems (2 commercial + 2 open-source) on Hindi/Hinglish conversational speech for a blue-collar hiring platform.
+Benchmarking multiple ASR systems on Hindi/Hinglish conversational speech under realistic noisy conditions for a blue-collar hiring platform.
 
-**Goal:** Evaluate which ASR system performs best for extracting locality names from noisy conversational audio.
+**Goal:** Evaluate which ASR system performs best for conversational transcription and locality extraction in real-world Indian audio environments.
 
 ---
 
 # Quick Results
 
-| Model           | WER (%) | Locality Accuracy (%) | Avg Latency (s) |
-|-----------------|---------|-----------------------|-----------------|
-| **Deepgram**    | **86.88** | **21.67**           | **3.34**        |
-| Google Cloud    | 93.26   | 11.67                 | 1.41            |
-| Whisper Small   | 95.41   | 6.67                  | 6.14            |
-| Whisper Base    | 99.72   | 1.67                  | 7.34            |
+| Model | Quiet WER (%) | Noisy WER (%) | Locality Extraction Accuracy (%) | Avg Latency (s) |
+|---|---|---|---|---|
+| **Deepgram** | **18.01** | **33.92** | **16.67** | **3.34** |
+| Google Cloud | 21.46 | 32.55 | 3.33 | 1.41 |
+| Whisper Small | 18.31 | 35.66 | 0.00 | 6.14 |
+| Whisper Base | 48.20 | 47.71 | 0.00 | 7.34 |
 
 ### Key Observation
 
-Deepgram achieved the strongest overall performance among evaluated systems, particularly for locality extraction under noisy conditions.
+Deepgram delivered the strongest overall performance, particularly for locality extraction and robustness under noisy metro conditions.
 
 ---
 
 # Visualizations
 
-## Overall Performance
+## Overall Benchmark Overview
 
 ![Combined Overview](results/charts/combined_overview.png)
 
-## Word Error Rate Comparison
+## Condition-wise Normalized Approximate WER Comparison
 
-![WER Comparison](results/charts/wer_comparison.png)
+![WER Comparison](results/charts/wer_by_condition.png)
 
-## Locality Extraction Accuracy
+## Condition-wise Locality Extraction Accuracy
 
-![Locality Accuracy](results/charts/locality_accuracy.png)
+![Locality Accuracy](results/charts/locality_by_condition.png)
 
-## Noise Impact on WER
+## Noise Robustness Degradation
 
-![Noise Impact](results/charts/degradation.png)
+![Noise Degradation](results/charts/degradation.png)
 
-## Inference Latency Comparison
+## Average Inference Latency
 
 ![Latency](results/charts/latency_comparison.png)
 
@@ -47,7 +47,7 @@ Deepgram achieved the strongest overall performance among evaluated systems, par
 
 # Dataset
 
-Custom dataset containing **60 audio samples** recorded under realistic conditions.
+Custom dataset containing **60 audio samples** recorded under realistic conversational conditions.
 
 ## Recording Conditions
 
@@ -63,6 +63,7 @@ Custom dataset containing **60 audio samples** recorded under realistic conditio
 
 - “Haan main Indiranagar mein rehta hoon”
 - “Mera ghar Whitefield mein hai”
+- “Main KR Puram ke paas rehta hoon”
 
 ## Localities Included
 
@@ -135,7 +136,7 @@ python src/benchmark.py
 ## Calculate Metrics
 
 ```bash
-python src/calculate_metrics.py
+python src/calculate_metrics_by_condition.py
 ```
 
 ## Generate Charts
@@ -148,19 +149,43 @@ python src/generate_charts.py
 
 # Main Findings
 
-- Deepgram achieved the lowest WER and highest locality extraction accuracy among evaluated systems.
-- Google Cloud delivered faster inference but weaker locality extraction performance.
-- Whisper Small performed better than Whisper Base, showing the impact of model size on multilingual ASR robustness.
-- All evaluated systems degraded significantly under metro noise conditions.
-- WER alone was insufficient for evaluating entity-centric conversational ASR systems.
+- Deepgram achieved the strongest locality extraction performance across all recording conditions.
+- Whisper Small performed competitively in quiet conditions but degraded significantly under metro noise.
+- Google Cloud delivered the fastest inference speed but weaker locality extraction capability.
+- Whisper Base showed minimal degradation under noise because baseline transcription quality was already consistently poor.
+- Earphone microphone recordings slightly worsened ASR performance compared to direct phone microphone recordings in metro environments.
+- Approximate WER alone was insufficient for evaluating conversational entity-focused ASR systems.
+- Open-source Whisper models were significantly less reliable under noisy Indian conversational conditions compared to commercial APIs.
 
 ---
 
 # Important Insight
 
-This benchmark showed that even when transcription quality was poor, some systems still extracted locality names correctly.
+This benchmark showed that transcription quality and entity extraction quality are not always strongly correlated.
 
-For hiring workflows, entity extraction quality can be more important than perfectly formatted transcription.
+Even when transcription quality degraded under noise, Deepgram still extracted locality names more reliably than other systems.
+
+For hiring workflows, correct extraction of locality information can be more important than perfectly formatted transcription.
+
+---
+
+# Condition-wise Robustness Analysis
+
+## Quiet Conditions
+
+- Deepgram and Whisper Small performed similarly under clean audio.
+- Whisper Small achieved strong transcription quality in low-noise environments.
+
+## Metro Noise Conditions
+
+- All models degraded significantly under metro background noise.
+- Deepgram maintained the strongest robustness and locality extraction performance.
+- Whisper Small experienced substantial degradation under noise despite good quiet-condition performance.
+
+## Earphone Microphone Findings
+
+- Metro recordings using earphone microphones slightly worsened ASR accuracy compared to direct phone microphones.
+- Possible causes include weaker microphone quality, noise pickup, and compression artifacts.
 
 ---
 
@@ -170,8 +195,9 @@ Observed issues included:
 
 - Locality corruption (“Yelahanka” → “yeh line ka”)
 - Hallucinated outputs under heavy noise
-- Script switching in Whisper Base
+- Script mismatch between Roman Hindi and Devanagari outputs
 - Random multilingual outputs in low-capacity models
+- Noise-induced transcription instability
 
 Example hallucinated output from Whisper Base:
 
@@ -183,6 +209,21 @@ generated for a noisy Hindi utterance.
 
 ---
 
+# Evaluation Methodology
+
+Normalized Approximate WER was estimated using similarity-based matching after script normalization and transliteration.
+
+This approach was used because Hindi/Hinglish ASR outputs frequently contained:
+
+- Devanagari vs Roman script mismatch
+- spacing inconsistencies
+- transliteration variation
+- conversational spelling differences
+
+Strict word-level WER would incorrectly penalize many semantically correct outputs under multilingual conditions.
+
+---
+
 # Recommendation
 
 ## Recommended System
@@ -191,10 +232,11 @@ generated for a noisy Hindi utterance.
 
 ## Reasons
 
-- Best locality extraction performance
-- More stable under noisy conditions
-- Better conversational robustness
-- Production-ready deployment workflow
+- Best overall robustness under noisy conditions
+- Strongest locality extraction accuracy
+- More stable conversational transcription
+- Better practical deployment suitability
+- Reliable performance across recording environments
 
 ---
 
@@ -214,7 +256,7 @@ Job Matching Pipeline
 
 ## Important Note
 
-All evaluated systems struggled significantly with noisy Indian conversational speech. Additional improvements such as custom NER models, confidence filtering, and larger datasets would likely be required for reliable production deployment.
+All evaluated systems struggled significantly under noisy conversational Indian speech conditions. Additional improvements such as custom NER layers, confidence filtering, larger datasets, and multilingual fine-tuning would likely be required for reliable production deployment.
 
 ---
 
@@ -230,6 +272,7 @@ asr-benchmark/
 │   ├── asr_engines/
 │   ├── benchmark.py
 │   ├── calculate_metrics.py
+│   ├── calculate_metrics_by_condition.py
 │   └── generate_charts.py
 │
 ├── results/
@@ -248,7 +291,7 @@ asr-benchmark/
 
 - `REPORT.md` → Detailed technical report
 - `results/metrics/` → Final evaluation metrics
-- `results/charts/` → Visualizations and comparisons
+- `results/charts/` → Visualizations and robustness analysis
 
 ---
 
@@ -256,8 +299,9 @@ asr-benchmark/
 
 - Small dataset size (60 recordings)
 - Single speaker recordings
-- Limited environmental noise diversity
+- Limited environmental diversity
 - Short conversational utterances only
+- No fine-tuning performed on open-source models
 
 This benchmark should be considered exploratory rather than a definitive production evaluation.
 
@@ -267,7 +311,9 @@ This benchmark should be considered exploratory rather than a definitive product
 
 This project explored how modern ASR systems behave under noisy Indian conversational conditions involving locality-heavy Hindi/Hinglish speech.
 
-Among evaluated systems, Deepgram delivered the strongest overall performance, while Whisper models struggled significantly without fine-tuning.
+The benchmark evolved beyond simple transcription evaluation into a robustness-focused analysis of conversational ASR behavior across multiple recording environments.
+
+Among evaluated systems, Deepgram delivered the strongest overall performance and maintained the best balance between transcription quality, locality extraction, and environmental robustness.
 
 The benchmark also highlighted the importance of:
 
@@ -275,6 +321,7 @@ The benchmark also highlighted the importance of:
 - multilingual evaluation
 - entity extraction
 - script normalization
+- environmental testing
 - failure analysis
 
 ---
