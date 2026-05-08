@@ -184,6 +184,13 @@ Use if speed critical (2.4x faster) OR budget <₹10,000/month. Accept 46% lower
 
 Results are exploratory benchmarking, not definitive production evaluation.
 
+### 6.1 Dataset Limitations
+
+- Small custom dataset (60 samples, single speaker)
+- Did not incorporate open-source datasets (Kathbath, Common Voice, FLEURS)
+- Trade-off decision: Prioritized depth (varied conditions, noise testing) over breadth (multiple datasets)
+- Custom recordings better matched the specific use case (locality extraction in noisy hiring calls)
+- Future work should include multi-speaker evaluation using IndicVoices or Kathbath
 ---
 
 ## 7. Conclusion
