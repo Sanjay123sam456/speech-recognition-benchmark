@@ -47,34 +47,53 @@ This benchmark evaluates Automatic Speech Recognition (ASR) systems for a blue-c
 
 ## 2. Results
 
-### 2.1 Overall Performance (60 Samples)
+### 2.1 Performance by Recording Condition
 
-| Model | WER (%) | Locality Accuracy (%) | Avg Latency (s) |
-|-------|---------|----------------------|----------------|
-| **Deepgram** | **86.88** | **21.67** | **3.34** |
-| Google Cloud | 93.26 | 11.67 | 1.41 |
-| Whisper Small | 95.41 | 6.67 | 6.14 |
-| Whisper Base | 99.72 | 1.67 | 7.34 |
+**Normal (Quiet Room + Phone Mic) - 20 samples:**
 
-### 2.2 Performance by Condition
+| Model | Error Rate (%) | Locality Accuracy (%) | Avg Latency (s) |
+|-------|----------------|----------------------|----------------|
+| **Deepgram** | **18.01** | **25.0** | **3.96** |
+| **Whisper Small** | **18.31** | **0.0** | **3.37** |
+| Google Cloud | 21.46 | 5.0 | 1.35 |
+| Whisper Base | 48.20 | 0.0 | 5.17 |
 
-| Model | Normal WER | Noisy WER | Degradation |
-|-------|------------|-----------|-------------|
-| Deepgram | 78.74% | 86.88% | +8.14% |
-| Google Cloud | 87.95% | 93.26% | +5.31% |
-| Whisper Small | 90.95% | 95.41% | +4.46% |
-| Whisper Base | 95.95% | 99.72% | +3.77% |
+**Metro + Phone Mic - 20 samples:**
+
+| Model | Error Rate (%) | Locality Accuracy (%) | Avg Latency (s) |
+|-------|----------------|----------------------|----------------|
+| **Google Cloud** | **30.39** | **5.0** | **1.43** |
+| **Deepgram** | **32.31** | **15.0** | **2.55** |
+| Whisper Small | 35.97 | 0.0 | 6.63 |
+| Whisper Base | 47.92 | 0.0 | 6.20 |
+
+**Metro + Earphone Mic - 20 samples:**
+
+| Model | Error Rate (%) | Locality Accuracy (%) | Avg Latency (s) |
+|-------|----------------|----------------------|----------------|
+| **Google Cloud** | **34.71** | **0.0** | **1.44** |
+| **Deepgram** | **35.54** | **10.0** | **3.50** |
+| Whisper Small | 35.35 | 0.0 | 8.42 |
+| Whisper Base | 47.50 | 0.0 | 10.64 |
+
+### 2.2 Overall Performance (Averaged Across 60 Samples)
+
+| Model | Quiet Error (%) | Noisy Error (%) | Overall Locality (%) | Avg Latency (s) |
+|-------|-----------------|-----------------|---------------------|----------------|
+| **Deepgram** | **18.01** | **33.92** | **16.67** | **3.34** |
+| Google Cloud | 21.46 | 32.55 | 3.33 | 1.41 |
+| Whisper Small | 18.31 | 35.66 | 0.00 | 6.14 |
+| Whisper Base | 48.20 | 47.71 | 0.00 | 7.34 |
 
 ### 2.3 Key Findings
 
-**Deepgram (Winner):** Lowest WER (86.88%), best locality extraction (21.67%), maintains lead despite +8.14% noise degradation. Consistent Devanagari output.
+**Deepgram (Winner):** Best overall performance with 18.01% error in quiet conditions and strongest locality extraction (16.67% overall, 25% in quiet). Maintains reliability despite noise degradation to 33.92% error.
 
-**Google Cloud:** Fastest (1.41s - 2.4x faster than Deepgram) but 46% lower locality accuracy. Best noise robustness (+5.31% degradation).
+**Google Cloud:** Fastest inference (1.41s - 2.4x faster than Deepgram). Competitive error rates (21.46% quiet, 32.55% noisy) but significantly weaker locality extraction (3.33% overall vs Deepgram's 16.67%).
 
-**Whisper Small:** High WER (95.41%), poor locality extraction (6.67%). Not production-viable despite being free.
+**Whisper Small:** Competitive in quiet conditions (18.31% error) but zero locality extraction and significant noise degradation to 35.66%. Not production-viable without fine-tuning.
 
-**Whisper Base:** Catastrophic failure (99.72% WER ≈ 100% error). Random script switching, complete model collapse under noise.
-
+**Whisper Base:** Consistently poor across all conditions (47-48% error rate). Shows minimal noise degradation because baseline performance already catastrophically bad.
 ---
 
 ## 3. Failure Analysis
